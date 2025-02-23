@@ -50,9 +50,9 @@ public class ShoppingReceiptTest {
                 shoppingReceipt.new Purchase(potato, 3.99, 1));
         Receipt receipt1 = shoppingReceipt.calculate(purchases1, "CA");
         assertNotNull(receipt1);
-        assertEquals(17.99 + 3.99, receipt1.subtotal);
-        assertEquals(1.80, receipt1.tax);
-        assertEquals(23.78, receipt1.total);
+        assertEquals(21.98, receipt1.getSubtotal());
+        assertEquals(1.80, receipt1.getTax());
+        assertEquals(23.78, receipt1.getTotal());
 
         // 測試 Use case 2
         List<Purchase> purchases2 = List.of(
@@ -60,7 +60,7 @@ public class ShoppingReceiptTest {
                 shoppingReceipt.new Purchase(pencil, 2.99, 3));
         Receipt receipt2 = shoppingReceipt.calculate(purchases2, "NY");
         assertNotNull(receipt2);
-        assertEquals(17.99 + 2.99 * 3, receipt2.getSubtotal());
+        assertEquals(26.96, receipt2.getSubtotal());
         assertEquals(2.40, receipt2.getTax(), 0.001);
         assertEquals(29.36, receipt2.getTotal());
 
@@ -70,7 +70,7 @@ public class ShoppingReceiptTest {
                 shoppingReceipt.new Purchase(shirt, 29.99, 1));
         Receipt receipt3 = shoppingReceipt.calculate(purchases3, "NY");
         assertNotNull(receipt3);
-        assertEquals(2.99 * 2 + 29.99, receipt3.getSubtotal(), 0.01);
+        assertEquals(35.97, receipt3.getSubtotal(), 0.01);
         assertEquals(0.55, receipt3.getTax(), 0.01);
         assertEquals(36.52, receipt3.getTotal(), 0.01);
 
@@ -102,12 +102,20 @@ public class ShoppingReceiptTest {
     public static void main(String[] args) {
 
         ShoppingReceipt shoppingReceipt = new ShoppingReceipt();
+
+        // 創建產品
         Product book = shoppingReceipt.new Product("book", "Book");
         Product potato = shoppingReceipt.new Product("potato", "Food");
-        Receipt receipt = shoppingReceipt.new Receipt(List.of(
-                shoppingReceipt.new Purchase(book, 17.99, 1),
-                shoppingReceipt.new Purchase(potato, 3.99, 1)), 17.99 + 3.99, 1.80, 17.99 + 3.99 + 1.80);
 
+        // 創建購買清單
+        List<Purchase> purchases = List.of(
+                shoppingReceipt.new Purchase(book, 17.99, 1),
+                shoppingReceipt.new Purchase(potato, 3.99, 1));
+
+        // 創建收據
+        Receipt receipt = shoppingReceipt.calculate(purchases, "CA");
+
+        // 列印收據
         shoppingReceipt.printReceipt(receipt);
     }
 }

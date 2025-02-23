@@ -118,6 +118,14 @@ public class ShoppingReceipt {
             this.total = total;
         }
 
+        public List<Purchase> getPurchases() {
+            return purchases;
+        }
+
+        public void setPurchases(List<Purchase> purchases) {
+            this.purchases = purchases;
+        }
+
     }
 
     // 依不同的州定義不同的課稅方法實作
@@ -168,21 +176,24 @@ public class ShoppingReceipt {
                 throw new IllegalArgumentException("品項資料錯誤");
             }
             taxBeforeRound = purchase.price * purchase.quantity * taxInterface.taxByLocation(purchase.product);
-            tax += Math.ceil(taxBeforeRound * 20) / 20.0;
+            tax += taxBeforeRound;
             subtotal += purchase.price * purchase.quantity;
         }
-        total = Math.round((subtotal + tax) * 100.0) / 100.0;
+
+        tax = Math.ceil(tax * 20.0) / 20.0; // 政府不能吃虧，必須無條件進位到最接近的 0.05
+        subtotal = Math.round(subtotal * 100.0) / 100.0; // 保留小數點後兩位
+        total = Math.round((subtotal + tax) * 100.0) / 100.0; // 保留小數點後兩位
         Receipt receipt = new Receipt(purchases, subtotal, tax, total);
         return receipt;
     }
 
     void printReceipt(Receipt receipt) {
         System.out.println("item  price  qty");
-        for (Purchase purchase : receipt.purchases) {
+        for (Purchase purchase : receipt.getPurchases()) {
             System.out.println(purchase.toString());
         }
-        System.out.println("subtotal:  $" + (Math.round(receipt.subtotal * 100.0) / 100.0));
-        System.out.println("tax:  $" + (Math.round(receipt.tax * 100.0) / 100.0));
-        System.out.println("total:  $" + (Math.round(receipt.total * 100.0) / 100.0));
+        System.out.println("subtotal:  $" + receipt.getSubtotal());
+        System.out.println("tax:  $" + receipt.getTax());
+        System.out.println("total:  $" + receipt.getTotal());
     }
 }
